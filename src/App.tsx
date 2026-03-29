@@ -20,6 +20,7 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Apply dynamic primary color to CSS variable
   useEffect(() => {
@@ -282,26 +283,53 @@ export default function App() {
               </p>
               
               <div className="space-y-6">
-                <ContactInfo icon={<Instagram />} label="Instagram" value="@sunhwa_design" />
-                <ContactInfo icon={<MessageCircle />} label="KakaoTalk" value="선화디자인" />
-                <ContactInfo icon={<Mail />} label="Email" value="contact@sunhwa.com" />
+                <ContactInfo icon={<Instagram />} label="Instagram" value="@bongsunga_store" />
+                <ContactInfo icon={<MessageCircle />} label="KakaoTalk" value="봉숭아점포" />
+                <ContactInfo icon={<Mail />} label="Email" value="contact@bongsunga.com" />
               </div>
             </div>
 
             <div className="bg-surface border border-border p-8 md:p-12 rounded-[40px]">
-              <form className="space-y-6" onSubmit={(e) => {
+              <form className="space-y-6" onSubmit={async (e) => {
                 e.preventDefault();
+                setIsSubmitting(true);
                 const formData = new FormData(e.currentTarget);
-                addInquiry({
+                
+                const inquiryData = {
                   id: Date.now().toString(),
                   name: formData.get('name') as string,
                   email: formData.get('email') as string,
                   phone: formData.get('phone') as string,
                   message: formData.get('message') as string,
                   date: new Date().toLocaleDateString(),
-                });
-                alert('문의가 성공적으로 접수되었습니다.');
-                (e.target as HTMLFormElement).reset();
+                };
+
+                try {
+                  const response = await fetch('https://formspree.io/f/mbdpgddd', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                      'Accept': 'application/json'
+                    }
+                  });
+
+                  if (response.ok) {
+                    addInquiry(inquiryData);
+                    alert('문의가 성공적으로 접수되었습니다.');
+                    (e.target as HTMLFormElement).reset();
+                  } else {
+                    const data = await response.json();
+                    if (data.errors) {
+                      alert(data.errors.map((error: any) => error.message).join(", "));
+                    } else {
+                      alert('문의 접수 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                    }
+                  }
+                } catch (error) {
+                  alert('네트워크 오류가 발생했습니다.');
+                } finally {
+                  setIsSubmitting(false);
+                }
               }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -321,8 +349,22 @@ export default function App() {
                   <label className="text-sm font-bold text-gray-400">문의 내용</label>
                   <textarea name="message" required className="w-full bg-background border border-border rounded-2xl px-6 py-4 focus:border-primary outline-none transition-colors h-40" placeholder="프로젝트에 대해 설명해 주세요." />
                 </div>
-                <button type="submit" className="w-full py-5 bg-primary hover:bg-primary/80 text-white font-black rounded-2xl transition-all shadow-lg shadow-primary/20">
-                  문의 보내기
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className={`w-full py-5 bg-primary hover:bg-primary/80 text-white font-black rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      전송 중...
+                    </>
+                  ) : (
+                    <>
+                      문의 보내기
+                      <ArrowRight size={20} />
+                    </>
+                  )}
                 </button>
               </form>
             </div>

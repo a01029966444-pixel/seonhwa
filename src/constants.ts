@@ -1,16 +1,16 @@
 import { SiteConfig, PortfolioItem, BlogPost } from './types';
 
 export const INITIAL_SITE_CONFIG: SiteConfig = {
-  title: "선화의 홈페이지",
-  description: "로고 디자인 및 홈페이지 제작 전문",
+  title: "봉숭아 점포",
+  description: "감성적인 소품 및 디자인 전문",
   hero: {
-    title: "당신의 브랜드를\n빛나게 하는 디자인",
-    subtitle: "고퀄리티 로고 디자인과 현대적인 웹사이트 제작으로 비즈니스의 가치를 높여드립니다.",
-    ctaText: "프로젝트 문의하기",
+    title: "당신의 일상에\n봉숭아 물을 들이다",
+    subtitle: "따뜻한 감성을 담은 소품과 디자인으로 당신의 공간에 작은 행복을 더해드립니다.",
+    ctaText: "스토어 둘러보기",
   },
   colors: {
-    primary: "#8B5CF6", // Purple 500
-    secondary: "#A78BFA", // Purple 400
+    primary: "#FF6B6B", // Balsam Pink
+    secondary: "#FF8E99", // Lighter Pink
     background: "#000000",
     text: "#FFFFFF",
   },
